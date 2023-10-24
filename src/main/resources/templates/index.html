@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Docket Creation Form</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #e2e2e2;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e2e2;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+    </style>
+
+    <script>
+    let suppliers_data;
+    const suppliers = [];
+    const purchaseOrders = {};
+    fetch('/read-excel')
+    .then(response => response.json()) // Assuming the response is in JSON format
+    .then(data => {
+        console.log("Getting the data....");
+        console.log(data);
+        suppliers_data = data;
+        for (const supplier in suppliers_data) {
+          suppliers.push(supplier);
+        }
+
+        for (const entity in suppliers_data) {
+          const purchaseOrderItems = suppliers_data[entity];
+          const poNumbers = purchaseOrderItems.map(item => {
+            return item.poNumber_Desc;
+          });
+
+          purchaseOrders[entity] = poNumbers;
+        }
+
+        populateSuppliers();
+        //filterPurchaseOrders();
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+// Function to populate the Supplier Name dropdown
+const populateSuppliers = () => {
+    const supplierDropdown = document.getElementById("supplier");
+    supplierDropdown.innerHTML = "";
+
+    suppliers.forEach(supplier => {
+        //const option = document.createElement("option");
+        //option.value = supplier;
+        //option.text = supplier;
+        const truncatedName = supplier.split('_')[0]; // Get the part before the first underscore
+        const option = document.createElement("option");
+        option.value = supplier;
+        option.text = truncatedName; // Display the truncated name
+        supplierDropdown.appendChild(option);
+    });
+};
+
+// Function to filter and populate the Purchase Order dropdown
+const filterPurchaseOrders = () => {
+    const supplierDropdown = document.getElementById("supplier");
+    const purchaseOrderDropdown = document.getElementById("purchaseOrder");
+    const selectedSupplier = supplierDropdown.value;
+
+    purchaseOrderDropdown.innerHTML = "";
+
+    if (selectedSupplier in purchaseOrders) {
+        purchaseOrders[selectedSupplier].forEach(order => {
+            const description = order.split('_')[1]; // Get the part after the first underscore
+            const option = document.createElement("option");
+            option.value = order;
+            //option.value = description;
+            option.text = description; // Display the part after the underscore
+            purchaseOrderDropdown.appendChild(option);
+        });
+    }
+};
+
+    </script>
+    <!--    <link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css">-->
+</head>
+<body>
+<h1>Docket Creation Form</h1>
+<form th:action="submit" th:method="POST" th:object="${docket}">
+    <!-- Name -->
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" th:field="*{name}" required="required"><br>
+
+    <!-- Start time -->
+    <label for="startTime">Start time:</label>
+    <input type="datetime-local" id="startTime" name="startTime" th:field="*{startTime}" required="required"><br>
+
+    <!-- End time -->
+    <label for="endTime">End time:</label>
+    <input type="datetime-local" id="endTime" name="endTime" th:field="*{endTime}" required="required"><br>
+
+    <!-- No. of hours worked -->
+    <label for="hoursWorked">No. of hours worked:</label>
+    <input type="number" id="hoursWorked" name="hoursWorked" th:field="*{hoursWorked}" required="required"><br>
+
+    <!-- Rate per hour -->
+    <label for="rate">Rate per hour:</label>
+    <input type="number" id="rate" name="rate" th:field="*{rate}" required="required"><br>
+
+    <!-- Supplier Name dropdown -->
+    <label for="supplier">Supplier Name:</label>
+    <select id="supplier" name="supplier" th:field="*{supplier}" onchange="filterPurchaseOrders()" required="required">
+        <option value="" disabled="disabled" selected="selected">Select Supplier</option>
+        <!-- Replace with the actual options from your data -->
+<!--        <option th:each="supplier : ${suppliers}" th:value="${supplier}" th:text="${supplier}"></option>-->
+    </select><br>
+
+    <!-- Purchase Order dropdown (filtered by Supplier Name) -->
+    <label for="purchaseOrder">Purchase Order:</label>
+    <select id="purchaseOrder" name="purchaseOrder" th:field="*{purchaseOrder}" required="required">
+        <option value="" disabled="disabled">Select Purchase Order</option>
+        <!-- Replace with the actual options from your data -->
+<!--        <option th:each="po : ${purchaseOrders[supplier]}" th:value="${po}" th:text="${po}"></option>-->
+    </select><br>
+
+    <!-- Submit button -->
+    <input type="submit" value="Submit">
+</form>
+
+<br>
+<h1 th:text="${successmsg}">successmsg</h1>
+
+<!-- Populate the Supplier Name dropdown on page load -->
+<script>
+       populateSuppliers();
+
+</script>
+</body>
+</html>

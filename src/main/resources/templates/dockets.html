@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(odd) {
+      background-color: #fff;
+    }
+  </style>
+  <title>Data Table</title>
+</head>
+<body>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Start Time</th>
+    <th>End Time</th>
+    <th>Hours Worked</th>
+    <th>Rate</th>
+    <th>Supplier</th>
+    <th>Purchase Order</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="item : ${items}">
+    <td th:text="${item.id}"></td>
+    <td th:text="${item.name}"></td>
+    <td th:text="${item.startTime}"></td>
+    <td th:text="${item.endTime}"></td>
+    <td th:text="${item.hoursWorked}"></td>
+    <td th:text="${item.rate}"></td>
+<!--    <td th:text="${item.supplier}"></td>-->
+    <td th:text="${#strings.substringBefore(item.supplier, '_')}"></td>
+<!--    <td th:text="${item.purchaseOrder}"></td>-->
+    <td th:text="${#strings.substringBefore(item.purchaseOrder, '_')}"></td>
+
+    <td th:text="${#strings.substringAfter(item.purchaseOrder, '_')}"></td>
+
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
