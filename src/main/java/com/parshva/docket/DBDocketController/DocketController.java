@@ -8,6 +8,8 @@ import com.parshva.docket.packageOrder.PurchaseOrder;
 import com.parshva.docket.packageOrder.PurchaseOrderService;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -53,9 +55,11 @@ public class DocketController {
     }
 
     @GetMapping("/read-excel")
-    public ResponseEntity<String> readExcel() {
+    public ResponseEntity<String> readExcel() throws IOException {
         System.out.println("Inside read-excel endpoint....");
-        String filePath = "/Users/abhishekkumar/Downloads/export29913.xlsx";
+        Resource resource = new ClassPathResource("export29913.xlsx");
+//        String filePath = "export29913.xlsx";
+        String filePath = resource.getFile().getAbsolutePath();
 //        List<PurchaseOrder> purchaseOrders = purchaseOrderService.readPurchaseOrdersFromCsv();
         Map<String, String> purchaseOrders = purchaseOrderService.readPurchaseOrdersFromCsv();
         Map<String, List<Map<String, String>>> supplierDataMap = new LinkedHashMap<>();

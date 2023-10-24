@@ -4,6 +4,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -14,8 +16,10 @@ import java.util.*;
 @Service
 public class PurchaseOrderService {
 
-    public Map<String, String> readPurchaseOrdersFromCsv() {
-        String filePath = "/Users/abhishekkumar/Downloads/export29913.xlsx";
+    public Map<String, String> readPurchaseOrdersFromCsv() throws IOException {
+        Resource resource = new ClassPathResource("export29913.xlsx");
+//        String filePath = "export29913.xlsx";
+        String filePath = resource.getFile().getAbsolutePath();
         List<PurchaseOrder> purchaseOrders = new ArrayList<>();
         List<Map<String, String>> lists = new ArrayList<>();
         Map<String, String> maps = null;
