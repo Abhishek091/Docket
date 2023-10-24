@@ -59,13 +59,14 @@ public class DocketController {
         System.out.println("Inside read-excel endpoint....");
         Resource resource = new ClassPathResource("export29913.xlsx");
 //        String filePath = "export29913.xlsx";
-        String filePath = resource.getFile().getAbsolutePath();
+//        String filePath = resource.getFile().getAbsolutePath();
 //        List<PurchaseOrder> purchaseOrders = purchaseOrderService.readPurchaseOrdersFromCsv();
         Map<String, String> purchaseOrders = purchaseOrderService.readPurchaseOrdersFromCsv();
         Map<String, List<Map<String, String>>> supplierDataMap = new LinkedHashMap<>();
 
-        try (FileInputStream fis = new FileInputStream(filePath);
-             Workbook workbook = WorkbookFactory.create(fis)) {
+//        try (FileInputStream fis = new FileInputStream(filePath);
+        try (InputStream inputStream = resource.getInputStream();
+             Workbook workbook = WorkbookFactory.create(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0); // Assuming you want the first sheet
 
             Iterator<Row> rowIterator = sheet.iterator();

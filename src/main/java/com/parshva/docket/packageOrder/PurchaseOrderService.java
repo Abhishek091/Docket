@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -19,13 +20,13 @@ public class PurchaseOrderService {
     public Map<String, String> readPurchaseOrdersFromCsv() throws IOException {
         Resource resource = new ClassPathResource("export29913.xlsx");
 //        String filePath = "export29913.xlsx";
-        String filePath = resource.getFile().getAbsolutePath();
+//        String filePath = resource.getFile().getAbsolutePath();
         List<PurchaseOrder> purchaseOrders = new ArrayList<>();
         List<Map<String, String>> lists = new ArrayList<>();
         Map<String, String> maps = null;
 
-        try (FileInputStream fis = new FileInputStream(filePath);
-             Workbook workbook = WorkbookFactory.create(fis)) {
+        try (InputStream inputStream = resource.getInputStream();
+             Workbook workbook = WorkbookFactory.create(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0); // Assuming you want the first sheet
 
             Iterator<Row> rowIterator = sheet.iterator();
